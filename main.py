@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 import uvicorn
 
-import detect
+from src import detect
 
 app = FastAPI()
 

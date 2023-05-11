@@ -1,11 +1,6 @@
-import os
-
-import matplotlib
 import numpy as np
-import cv2
-from matplotlib import pyplot as plt
 
-import approx
+from src import approx
 import generate
 import match
 

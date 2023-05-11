@@ -1,8 +1,9 @@
 import math
-
-import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+
+#用于生成标准图形，格式化输入，输出图片等
+
 def generateSq():
     x_coords = np.linspace(0, 100, 25)
     y_coords = np.linspace(0, 0, 25)
@@ -78,6 +79,8 @@ def generateTriangle():
 
     tria = tria + np.column_stack((x_coords, y_coords)).tolist()
     return tria
+
+
 def format(e0):
     max_x = None
     min_x = None
@@ -99,18 +102,25 @@ def format(e0):
         x = e0[i][0]
         y = e0[i][1]
 
-        e0[i][0] = (x - min_x) * 200 / (max_x - min_x)
-        e0[i][1] = (y - min_y) * 200 / (max_y - min_y)
+        e0[i][0] = (x - min_x) * 100 / (max_x - min_x)
+        e0[i][1] = (y - min_y) * 100 / (max_y - min_y)
 
     return (max_x - min_x) / (max_y - min_y)
-
 
 
 def show(e0):
     x = [point[0] for point in e0]
     y = [point[1] for point in e0]
 
-    plt.plot(x, y, '-')
+    plt.plot(x, y, '-o')
     plt.axis('equal')
     plt.show()
 
+def show1(e0, str):
+    x = [point[0] for point in e0]
+    y = [point[1] for point in e0]
+
+    plt.plot(x, y, '-o')
+    plt.axis('equal')
+    plt.text(max(x) + 4, max(y) / 4 , str)
+    plt.show()

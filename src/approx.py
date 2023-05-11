@@ -22,7 +22,14 @@ def approx(points):
 
     result = '\n'.join(str(num) for num in list2)
     generate.show1(points, result)
-    return process(approx7).tolist()
+
+    p = process(approx8).tolist()
+
+    res = []
+    for i in p:
+        res.append(i[0])
+
+    return res
 
 #暴力处理一笔画的初始点与结束点
 def process(points):

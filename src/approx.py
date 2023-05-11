@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-import generate
+from src import generate
 
 #基于approxPolyDP的拟合，并处理边际点
 def approx(points):

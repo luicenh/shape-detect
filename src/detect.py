@@ -1,8 +1,8 @@
 import numpy as np
 
 from src import approx
-import generate
-import match
+from src import generate
+from src import match
 
 #主方法
 def detect(e0) :

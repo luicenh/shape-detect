@@ -1,7 +1,7 @@
 import math
 
 
-def detect_sq(points, f):
+def detect_sq(points, ratio, f):
     print(points)
 
     x1, y1 = points[0][0], points[0][1]
@@ -9,10 +9,10 @@ def detect_sq(points, f):
     x3, y3 = points[2][0], points[2][1]
     x4, y4 = points[3][0], points[3][1]
 
-    v1 = (x2 - x1, y2 - y1)
-    v2 = (x3 - x2, y3 - y2)
-    v3 = (x4 - x3, y4 - y3)
-    v4 = (x1 - x4, y1 - y4)
+    v1 = ((x2 - x1) * ratio, y2 - y1)
+    v2 = ((x3 - x2) * ratio, y3 - y2)
+    v3 = ((x4 - x3) * ratio, y4 - y3)
+    v4 = ((x1 - x4) * ratio, y1 - y4)
 
     # 计算夹角
     a1 = math.acos(

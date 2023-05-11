@@ -23,33 +23,44 @@ def detect(e0) :
     circle_points = np.array(circle, np.float32)
     tria_points = np.array(tria, np.float32)
 
-    # 分别比较
+    # 标准平行四边形
     res = cv2.matchShapes(points, pall_points, 1, 0)
     print("parall", res)
     if res < 0.01:
         return "parall", ratio
-    res = cv2.matchShapes(points, circle_points, 1, 0)
-    print("circle", res)
-    if res < 0.015:
-        return "circle", ratio
+    # 标准三角形
     res = cv2.matchShapes(points, tria_points, 1, 0)
     print("tria", res)
     if res < 0.01:
         return "tria", ratio
 
-    res_points = approx.approx(points)
+    # 标准圆
+    likeCircle = False
+    res = cv2.matchShapes(points, circle_points, 1, 0)
+    print("circle", res)
+    if res < 0.01:
+        return "circle", ratio
+    if res < 0.02:
+        likeCircle = True
 
+    res_points = approx.approx(points, likeCircle)
+
+    if len(res_points) > 8:
+        return "circle", ratio
+
+    # 标准正方形
     res = cv2.matchShapes(points, sq_points, 1, 0)
     print("sq", res)
     if res < 0.01 :
-        return sq_detect.detect_sq(res_points, True), ratio
+        return sq_detect.detect_sq(res_points, ratio, True), ratio
 
-    print(len(res_points))
+
+    print("length is %.2f " % len(res_points))
 
     if len(res_points) == 3:
         return "tria", ratio
 
     if len(res_points) == 4:
-        return sq_detect.detect_sq(res_points, False), ratio
+        return sq_detect.detect_sq(res_points, ratio, False), ratio
 
     return "none", ratio

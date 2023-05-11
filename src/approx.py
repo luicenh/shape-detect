@@ -4,7 +4,7 @@ import numpy as np
 from src import generate
 
 #基于approxPolyDP的拟合，并处理边际点
-def approx(points):
+def approx(points, likeCircle):
     approx5 = cv2.approxPolyDP(points, 0.009 * cv2.arcLength(points, True), True)
     approx6 = cv2.approxPolyDP(points, 0.01 * cv2.arcLength(points, True), True)
     approx7 = cv2.approxPolyDP(points, 0.02 * cv2.arcLength(points, True), True)
@@ -12,6 +12,10 @@ def approx(points):
     approx9 = cv2.approxPolyDP(points, 0.04 * cv2.arcLength(points, True), True)
 
     nums = [len(approx5), len(approx6), len(approx7), len(approx8), len(approx9)]
+
+    if likeCircle and len(approx6) > 8:
+        return approx6
+
 
     result = '\n'.join(str(num) for num in nums)
 

@@ -36,15 +36,15 @@ def detect(e0) :
         return "tria", width, height, rotate_angle
 
     # 标准圆
-    likeCircle = False
+    like_circle = False
     res = cv2.matchShapes(points, circle_points, 1, 0)
     print("circle", res)
     if res < 0.01:
         return "circle", width, height, rotate_angle
     if res < 0.02:
-        likeCircle = True
+        like_circle = True
 
-    res_points = approx.approx(points, likeCircle)
+    res_points = approx.approx(points, like_circle)
 
     for point in res_points:
         point[0] = point[0] * ratio
@@ -94,15 +94,15 @@ def detect_circle(e0) :
     circle_points = np.array(circle, np.float32)
 
     # 标准圆
-    likeCircle = False
+    like_circle = False
     res = cv2.matchShapes(points, circle_points, 1, 0)
     print("circle", res)
     if res < 0.01:
         return "circle", width, height, rotate_angle
     if res < 0.02:
-        likeCircle = True
+        like_circle = True
 
-    res_points = approx.approx(points, likeCircle)
+    res_points = approx.approx(points, like_circle)
 
     if len(res_points) > 8:
         return "circle", width, height, rotate_angle

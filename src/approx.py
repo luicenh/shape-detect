@@ -4,23 +4,15 @@ import numpy as np
 from src import generator
 
 #基于approxPolyDP的拟合，并处理边际点
-def approx(points, likeCircle):
+def approx(points, like_circle):
     approx5 = cv2.approxPolyDP(points, 0.009 * cv2.arcLength(points, True), True)
     approx6 = cv2.approxPolyDP(points, 0.01 * cv2.arcLength(points, True), True)
     approx7 = cv2.approxPolyDP(points, 0.02 * cv2.arcLength(points, True), True)
     approx8 = cv2.approxPolyDP(points, 0.03 * cv2.arcLength(points, True), True)
     approx9 = cv2.approxPolyDP(points, 0.04 * cv2.arcLength(points, True), True)
 
-    nums = [len(approx5), len(approx6), len(approx7), len(approx8), len(approx9)]
-
-    if likeCircle and len(approx6) > 8:
+    if like_circle and len(approx6) > 8:
         return approx6
-
-
-    result = '\n'.join(str(num) for num in nums)
-
-    # generator.show1(points, result)
-    # 使用切片和join方法，在每5个数字之后添加一个换行符
 
     list2 = [len(process(approx5)), len(process(approx6)), len(process(approx7)), len(process(approx8)), len(process(approx9))]
 

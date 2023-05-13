@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from src import generate
+from src import generator
 
 #基于approxPolyDP的拟合，并处理边际点
 def approx(points, likeCircle):
@@ -19,13 +19,13 @@ def approx(points, likeCircle):
 
     result = '\n'.join(str(num) for num in nums)
 
-    generate.show1(points, result)
+    # generator.show1(points, result)
     # 使用切片和join方法，在每5个数字之后添加一个换行符
 
     list2 = [len(process(approx5)), len(process(approx6)), len(process(approx7)), len(process(approx8)), len(process(approx9))]
 
     result = '\n'.join(str(num) for num in list2)
-    generate.show1(points, result)
+    generator.show1(points, result)
 
     p = process(approx8).tolist()
 

@@ -105,7 +105,7 @@ def format(e0):
         e0[i][0] = (x - min_x) * 100 / (max_x - min_x)
         e0[i][1] = (y - min_y) * 100 / (max_y - min_y)
 
-    return (max_x - min_x) / (max_y - min_y)
+    return (max_x - min_x) / (max_y - min_y), max_x - min_x, max_y - min_y
 
 
 def show(e0):

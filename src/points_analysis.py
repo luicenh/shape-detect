@@ -1,9 +1,9 @@
 import math
-from src import rotate
+from src import rotate, generator
 
-def detect_quadrangle(points, ratio, f):
-    print(points)
 
+def detect_quadrangle(points, ratio, r2, f):
+    extra = {}
     x1, y1 = points[0][0], points[0][1]
     x2, y2 = points[1][0], points[1][1]
     x3, y3 = points[2][0], points[2][1]
@@ -29,27 +29,30 @@ def detect_quadrangle(points, ratio, f):
     a2 = math.degrees(a2) % 360
     a3 = math.degrees(a3) % 360
     a4 = math.degrees(a4) % 360
-    print(a1, a2, a3, a4)
 
-    if (-15 * ratio < x1 - x3 < 15 * ratio or -15 < y1 - y3 < 15) & (
-            -15 * ratio < x2 - x4 < 15 * ratio or -15 < y2 - y4 < 15) & sum180(a1, a2) & sum180(a2, a3):
-        return "diamond", False
+    if (-20 * ratio * r2 < x1 - x3 < 20 * ratio * r2 or -20 * r2 < y1 - y3 < 20 * r2) & (
+            -20 * ratio * r2 < x2 - x4 < 20 * ratio * r2 or -20 * r2 < y2 - y4 < 20 * r2) & sum180(a1, a2) & sum180(a2,
+                                                                                                                    a3):
+        return "diamond", False, extra
+
+    is_rotate = not rotate.check_rotate(points)
 
     if f:
-        return "sq", False
-
-    is_rotate = not rotate.checkRotate(points)
+        return "sq", is_rotate, extra
 
     if sum180(a1, a2) & sum180(a2, a3):
         if is90(a1):
-            return "sq", is_rotate
+            return "sq", is_rotate, extra
         else:
-            return "parall", is_rotate
+            is_rotate = is_rotate or not rotate.check_shape("parall", points)
+            if not is_rotate:
+                extra["lb_angle"] = cal_left_bottom_angle(points)
+            return "parall", is_rotate, extra
 
     if (sum180(a1, a2) & sum180(a3, a4)) | (sum180(a1, a4) & sum180(a2, a3)):
-        return "ladder", is_rotate
+        return "ladder", is_rotate or not rotate.check_shape("ladder", points), extra
 
-    return "none", is_rotate
+    return "none", is_rotate, extra
 
 
 def sum180(a1, a2):
@@ -58,6 +61,7 @@ def sum180(a1, a2):
 
 def is90(a1):
     return 80 < a1 < 100
+
 
 def detect_triangle(points):
     print(points)
@@ -77,15 +81,15 @@ def detect_triangle(points):
     a1 = math.degrees(math.acos(cos_theta1))
     a2 = math.degrees(math.acos(cos_theta2))
     a3 = math.degrees(math.acos(cos_theta3))
-    #依次p3, p1, p2
-    print(a1, a2, a3)
+    # 依次p3, p1, p2
+    # print(a1, a2, a3)
 
     diff1 = abs(a1 - a2)
     diff2 = abs(a1 - a3)
     diff3 = abs(a2 - a3)
 
     # 找到两个差值中的最小值
-    #依次p2, p1, p3
+    # 依次p2, p1, p3
     min_diff = min(diff1, diff2, diff3)
 
     width, height, angle = 0, 0, 0
@@ -103,6 +107,7 @@ def detect_triangle(points):
 
     return width, height, angle
 
+
 def cal_triangle(p1, p2, p3):
     x1, y1 = p1
     x2, y2 = p2
@@ -115,9 +120,9 @@ def cal_triangle(p1, p2, p3):
     A, B, C = y2 - y1, x1 - x2, x2 * y1 - x1 * y2
     height = abs(A * x3 + B * y3 + C) / math.sqrt(A ** 2 + B ** 2)
 
-    #中点坐标
-    x4 = (x1 + x2 ) / 2
-    y4 = (y1 + y2 ) / 2
+    # 中点坐标
+    x4 = (x1 + x2) / 2
+    y4 = (y1 + y2) / 2
 
     # 计算连线斜率
     k = (y3 - y4) / (x3 - x4)
@@ -132,8 +137,44 @@ def cal_triangle(p1, p2, p3):
     if theta_degrees < 0:
         theta_degrees += 360
 
-    #夹角大于180度
+    # 夹角大于180度
     if x4 > x3:
         theta_degrees += 180
 
     return width, height, theta_degrees
+
+
+def cal_left_bottom_angle(points):
+    sorted_points = sorted(points, key=lambda x: x[1])
+
+    generator.show(points)
+    # 取出前两个坐标和后两个坐标
+    low_points = sorted_points[:2]
+    high_points = sorted_points[-2:]
+
+    #依次取a左上、b左下、c右下点
+    if high_points[1][0] > high_points[0][0]:
+        a = high_points[0]
+    else:
+        a = high_points[1]
+
+    if low_points[1][0] > low_points[0][0]:
+        b = low_points[0]
+        c = low_points[1]
+    else:
+        b = low_points[1]
+        c = low_points[0]
+
+    print(a, b, c)
+
+    ab = [b[0] - a[0], b[1] - a[1]]
+    bc = [b[0] - c[0], b[1] - c[1]]
+
+    dot_ab_bc = ab[0] * bc[0] + ab[1] * bc[1]
+    mod_ab = math.sqrt(ab[0] ** 2 + ab[1] ** 2)
+    mod_bc = math.sqrt(bc[0] ** 2 + bc[1] ** 2)
+
+    cos_abc = dot_ab_bc / (mod_ab * mod_bc)
+
+    degree_abc = math.degrees(math.acos(cos_abc))
+    return degree_abc

@@ -1,8 +1,9 @@
 import math
 
-from src import generator
+from src import points_analysis
 
-def getCenter(e0):
+
+def get_center(e0):
     max_x = None
     min_x = None
     max_y = None
@@ -19,9 +20,10 @@ def getCenter(e0):
         if min_y is None or y < min_y:
             min_y = y
 
-    return ((max_x + min_x)/2, (max_y + min_y)/2)
+    return ((max_x + min_x) / 2, (max_y + min_y) / 2)
 
-def getSide(e0) :
+
+def get_side(e0):
     max_x = None
     min_x = None
     max_y = None
@@ -39,8 +41,10 @@ def getSide(e0) :
             min_y = y
 
     return max_x - min_x, max_y - min_y
+
+
 def rotate15(M):
-    p = getCenter(M)
+    p = get_center(M)
     theta = math.radians(15)  # 逆时针旋转角度（15度对应的弧度）
     cos_theta = math.cos(theta)
     sin_theta = math.sin(theta)
@@ -50,15 +54,15 @@ def rotate15(M):
 
     return M_rotated
 
-def checkRotate(points):
-    print(points)
 
+def check_rotate(points):
     x1, y1 = points[0][0], points[0][1]
     x2, y2 = points[1][0], points[1][1]
     x3, y3 = points[2][0], points[2][1]
     x4, y4 = points[3][0], points[3][1]
 
-    return (is_parallel(y2 - y1, x2 - x1) & is_parallel(y4 - y3, x4 - x3)) or (is_parallel(y3 - y2, x3 - x2) & is_parallel(y1 - y4, x1 - x4))
+    return (is_parallel(y2 - y1, x2 - x1) & is_parallel(y4 - y3, x4 - x3)) or (
+                is_parallel(y3 - y2, x3 - x2) & is_parallel(y1 - y4, x1 - x4))
 
 
 def is_parallel(y, x):
@@ -67,18 +71,14 @@ def is_parallel(y, x):
 
     return -0.26795 < y / x < 0.26795
 
-
-def checkShape(shape, points):
-    if shape == "ladder" :
+# 检测是否为标准形状，梯形上边比下边短，平行四边形左下角为锐角（可不判断）
+def check_shape(shape, points):
+    if shape == "ladder":
         sorted_points = sorted(points, key=lambda x: x[1])
 
         # 取出前两个坐标和后两个坐标
-        print("====")
         low_points = sorted_points[:2]
-        print(low_points)
         high_points = sorted_points[-2:]
-        print(high_points)
-        print("====")
 
         # 计算y值更高的两个点的y值之差以及y值更低的两个点的y值之差
         diff_high = high_points[1][0] - high_points[0][0]
@@ -87,29 +87,32 @@ def checkShape(shape, points):
         return abs(diff_low) > abs(diff_high)
 
     if shape == "parall":
-        sorted_points = sorted(points, key=lambda x: x[1])
-
-        # 取出前两个坐标和后两个坐标
-        low_points = sorted_points[:2]
-        high_points = sorted_points[-2:]
-
-        # 计算y值更高的两个点的y值之差以及y值更低的两个点的y值之差
-        diff_high = high_points[1][0] + high_points[0][0]
-        diff_low = low_points[1][0] + low_points[0][0]
-
-        return diff_low < diff_high
+        return True
+        # sorted_points = sorted(points, key=lambda x: x[1])
+        #
+        # # 取出前两个坐标和后两个坐标
+        # low_points = sorted_points[:2]
+        # high_points = sorted_points[-2:]
+        #
+        # # 计算y值更高的两个点的y值之差以及y值更低的两个点的y值之差
+        # diff_high = high_points[1][0] + high_points[0][0]
+        # diff_low = low_points[1][0] + low_points[0][0]
+        #
+        # return diff_low < diff_high
 
     return True
 
 
 def rotate_quadrangle(shape, points):
+    extra = {}
     angle = 0
     for i in range(24):
         angle += 15
         points = rotate15(points)
-        generator.show(points)
-        print(angle)
-        if checkRotate(points) & checkShape(shape, points):
-            width, height = getSide(points)
-            return width, height, angle
-    return 0, 0, 0
+        # generator.show(points)
+        if check_rotate(points) & check_shape(shape, points):
+            if shape == "parall":
+                extra["bl_angle"] = points_analysis.cal_left_bottom_angle(points)
+            width, height = get_side(points)
+            return width, height, angle, extra
+    return 0, 0, 0, extra

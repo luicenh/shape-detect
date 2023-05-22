@@ -1,2 +1,2 @@
 # shape-detect
-to detect simple shape
+a way to detect simple shape by a serial of points
